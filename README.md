@@ -4,8 +4,7 @@
 This project is a generalization of the concepts presented by [sschoener](https://github.com/sschoener/cities-skylines-detour). For details on that, see below. HookManager is intended to be directly embedded in your project, not used as a class library (see caveats). As such, the only projects in this repository are for unit testing.
 
 **PlayHooky** has been tested successfully in:
-* .NET 4.5 x86
-* .NET 4.5 x64
+* .NET 4.5 x86/x64
 * Unity 5.0 x86 (Mono 2.6)
 * Unity 5.5 x64 (Mono 2.6)
 * Mono 4.4 x64
@@ -28,7 +27,7 @@ If you are building TestDLL for unit testing, you will need to move mscorlib.dll
 6. HookManager.cs should ideally be embedded directly in the class library you are injecting into a target process, but should also work as a stand alone class library provided your injector handles dependencies correctly.
 
 # Pitfalls
-1. Calling the original method is not possible at this time. Doing so will overflow the stack as a hook is calling itself.
+1. Calling the original method is not possible at this time. Doing so will overflow the stack as a hook is calling itself. See TODO.
 
 # Technical Details (x86)
 Hooks are performed by changing the first 6 bytes of a JIT'd method to the following:
@@ -55,7 +54,9 @@ Where replacementSite is the address of the hook function. This is a simple JMP 
 Our hook works because in x64, only fastcall is used under the hood, so we take the exact same arguments as the method we hooked. The stack is left intact and cleaned up properly because the hook method receives the same stack as the original method.
 
 # TODO
-1. Add more checks on methods being passed to HookJMP.
+1. Add Length Disassembler Engine for smarter hooking and trampolines.
+2. Allow calling of original method using TODO #1.
+3. Get rid of static methods and add a real class for simpler hooking/unhooking.
 
 # License
 MIT - See [LICENSE](LICENSE)
