@@ -90,9 +90,9 @@ namespace PlayHooky {
 		public unsafe void Hook(MethodInfo original, MethodInfo replacement) {
 
 			//erroneous input check
-			if (original == null) throw new ArgumentNullException("original"); //original function should not be null
-			if (replacement == null) throw new ArgumentNullException("replacement"); //replacement function should not be null
-			if (original == replacement) throw new ArgumentException("A function can't hook itself"); //original and replacement cannot be the same function
+			if ((object) original == null) throw new ArgumentNullException("original"); //original function should not be null
+			if ((object) replacement == null) throw new ArgumentNullException("replacement"); //replacement function should not be null
+			if ((object) original == (object) replacement) throw new ArgumentException("A function can't hook itself"); //original and replacement cannot be the same function
 
 			//Hook sanity checks.
 			if (original.IsGenericMethod) throw new ArgumentException("Original method cannot be generic"); //original function can't be generic
@@ -134,6 +134,10 @@ namespace PlayHooky {
 
 		//patch the compiled JIT assembly with a primitive JMP hook
 		private unsafe byte[] PatchJMP(MethodInfo original, MethodInfo replacement) {
+
+			//JIT compile methods
+			RuntimeHelpers.PrepareMethod(original.MethodHandle);
+			RuntimeHelpers.PrepareMethod(replacement.MethodHandle);
 
 			//compile both functions and get pointers to them.
 			IntPtr originalSite = original.MethodHandle.GetFunctionPointer();
